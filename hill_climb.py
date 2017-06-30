@@ -54,7 +54,7 @@ def initial_state(problem):
 	return matrix	
 						
 
-def getNeighbor(matrix):
+def getNeighbor(matrix, fixedposition):
 	matrixNei = copy.deepcopy(matrix)
 	coluna = randint(0,8)
 	x1 = randint(0,8)
@@ -67,7 +67,13 @@ def getNeighbor(matrix):
 	matrixNei[x2][coluna] = aux
 	return matrixNei
 
+def neighbors(matrix, fixedposition):
+	neighbors = []
 
+	for i in xrange(0,9):
+		for j in xrange(0,9):
+			if matrix[j][i] == '.':
+				x+=1
 
 def repeated(candidate):
 
@@ -107,7 +113,7 @@ def repeated(candidate):
 	return value
 
 #Avalia as linhas
-def calculate_row(candidate):
+def calculate_row2(candidate):
 	
 	i=0
 	modulo=9
@@ -118,9 +124,17 @@ def calculate_row(candidate):
 		i = i+1
 
 	return value
+
+def calculate_row(candidate):	
+	value=0
+	for i in range(0,9):
+			box = []
+			box += m[i][0:9] 
+			value += repeated(box)
+	return value
 		
 #Avalia os quadrados
-def calculate_box(candidate):
+def calculate_box2(candidate):
 
 	i=0
 	j=0
@@ -148,7 +162,19 @@ def calculate_box(candidate):
 		finalPoint = value
 
 	return finalPoint
-		
+
+def calculate_box(candidate):	
+	value = 0
+	for x in xrange(0,3):
+		for i in range(0,3):
+			box = []
+			for j in range(0,3):
+				linha = (3*x) + j
+				coluna = (3*i)
+				box += m[linha][coluna:coluna+3] 
+			value += repeated(box)
+	return value
+
 # Avalia a pontuacao para cada individuo
 def calculate(candidate):
 
@@ -190,5 +216,8 @@ sampleGrid = [['.', '.', '.', '7', '.', '.', '.', '.', '.'],
 
 occupied = [3,9,21,22,24,35,39,41,51,52,53,58,59,65,70,73,78] # lembrar que comeca em zero nao em um
 # print convertMatrixToArray(hill_climbing(sampleGrid))
-printGrid(convertMatrixToArray(hill_climbing(sampleGrid)),0)
-# initial_state(sampleGrid)
+# printGrid(convertMatrixToArray(hill_climbing(sampleGrid)),0)
+m = initial_state(sampleGrid)
+# printGrid(convertMatrixToArray(m),0)
+print calculate_row(m)
+print calculate_row2(convertMatrixToArray(m))
