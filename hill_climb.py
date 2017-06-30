@@ -61,30 +61,26 @@ def max_neighbor(matrix, fixedposition):
 	global coluna_ant
 
 	maxneighbor = []
-	matrixNei = copy.deepcopy(matrix)
-	coluna = randint(0,8)
-	
-	while coluna_ant == coluna:
-		coluna = randint(0,8)		
-	coluna_ant = coluna	
+	matrixNei = copy.deepcopy(matrix)	
 
 	maxvalue = 0
 	newvalue = 0
 
-	for i in xrange(0,9):
-		for j in xrange(i+1,9):
-			if fixedposition.count((i*9)+coluna) == 0 and fixedposition.count((j*9)+coluna) == 0:		
-				aux = matrixNei[i][coluna]
-				matrixNei[i][coluna] = matrixNei[j][coluna]
-				matrixNei[j][coluna] = aux
-				newvalue = calculate(matrixNei)
-				if maxvalue < newvalue:
-					maxneighbor = copy.deepcopy(matrixNei)
-					maxvalue = newvalue
+	for coluna in xrange(0,9):
+		for i in xrange(0,9):
+			for j in xrange(i+1,9):
+				if fixedposition.count((i*9)+coluna) == 0 and fixedposition.count((j*9)+coluna) == 0:		
+					aux = matrixNei[i][coluna]
+					matrixNei[i][coluna] = matrixNei[j][coluna]
+					matrixNei[j][coluna] = aux
+					newvalue = calculate(matrixNei)
+					if maxvalue < newvalue:
+						maxneighbor = copy.deepcopy(matrixNei)
+						maxvalue = newvalue
 
-				aux = matrixNei[i][coluna]
-				matrixNei[i][coluna] = matrixNei[j][coluna]
-				matrixNei[j][coluna] = aux
+					aux = matrixNei[i][coluna]
+					matrixNei[i][coluna] = matrixNei[j][coluna]
+					matrixNei[j][coluna] = aux
 
 	return [maxneighbor, maxvalue]
 
@@ -163,12 +159,14 @@ def hill_climbing(problem, fixedposition):
 	neighbor = []
 	current = initial_state(problem)
 	count = 0
+	max_calculate = calculate(current)
 
 	while count < limit:
 		[neighbor, neigvalue] = max_neighbor(current, fixedposition)
 
-		if calculate(current) < neigvalue:
+		if max_calculate < neigvalue:
 			current = neighbor
+			max_calculate = neigvalue
 
 		count += 1
 
