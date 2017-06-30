@@ -1,6 +1,8 @@
 from random import randint
 import copy
 
+coluna_ant = None
+
 def printGrid (grid, add_zeros):
   i = 0
   print '\n------+-------+-------+'
@@ -52,28 +54,37 @@ def initial_state(problem):
 				matrix[a][i] = x
 			x+=1
 	return matrix	
-						
 
-def getNeighbor(matrix, fixedposition):
+def max_neighbor(matrix, fixedposition):
+	global coluna_ant
+
+	maxneighbor = []
 	matrixNei = copy.deepcopy(matrix)
 	coluna = randint(0,8)
-	x1 = randint(0,8)
-	x2 = randint(0,8)
-	while x1 == x2:
-		x1 = randint(0,8)
-		x2 = randint(0,8)
-	aux = matrixNei[x1][coluna]
-	matrixNei[x1][coluna] = matrixNei[x2][coluna]
-	matrixNei[x2][coluna] = aux
-	return matrixNei
+	
+	while coluna_ant == coluna:
+		coluna = randint(0,8)		
+	coluna_ant = coluna	
 
-def neighbors(matrix, fixedposition):
-	neighbors = []
+	maxvalue = 0
+	newvalue = 0
 
-	for i in xrange(0,9):
-		for j in xrange(0,9):
-			if matrix[j][i] == '.':
-				x+=1
+	for i in xrange(0,1):
+		for j in xrange(i+1,9):
+			if fixedposition.count((i*9)+j) == 0:		
+				aux = matrixNei[i][coluna]
+				matrixNei[i][coluna] = matrixNei[j][coluna]
+				matrixNei[j][coluna] = aux
+				newvalue = calculate(matrixNei)
+				if maxvalue < newvalue:
+					maxneighbor = copy.deepcopy(matrixNei)
+					maxvalue = newvalue
+
+				aux = matrixNei[i][coluna]
+				matrixNei[i][coluna] = matrixNei[j][coluna]
+				matrixNei[j][coluna] = aux
+
+	return maxneighbor
 
 def repeated(candidate):
 
@@ -113,56 +124,15 @@ def repeated(candidate):
 	return value
 
 #Avalia as linhas
-def calculate_row2(candidate):
-	
-	i=0
-	modulo=9
-	value=0
-	while(i < modulo):
-		candidateRow = candidate[modulo*i:modulo*(i+1)]
-		value += repeated(candidateRow)
-		i = i+1
-
-	return value
-
 def calculate_row(candidate):	
 	value=0
 	for i in range(0,9):
 			box = []
-			box += m[i][0:9] 
+			box += candidate[i][0:9] 
 			value += repeated(box)
 	return value
 		
 #Avalia os quadrados
-def calculate_box2(candidate):
-
-	i=0
-	j=0
-	k=0
-	modulo=9
-	lengh=3
-	height=72
-	value=0
-	value2=0
-	finalPoint=0
-	listAval = []
-
-	while(k < height):
-		j=0
-		listAval = []
-		while(j < modulo):
-			listAval = []
-			i=0
-			while(i < lengh):
-				listAval += candidate[(modulo*i)+j+k:((modulo*i)+3)+j+k]
-				i = i+1
-			j=j+3
-			value += repeated(listAval)
-		k=k+27
-		finalPoint = value
-
-	return finalPoint
-
 def calculate_box(candidate):	
 	value = 0
 	for x in xrange(0,3):
@@ -171,7 +141,7 @@ def calculate_box(candidate):
 			for j in range(0,3):
 				linha = (3*x) + j
 				coluna = (3*i)
-				box += m[linha][coluna:coluna+3] 
+				box += candidate[linha][coluna:coluna+3] 
 			value += repeated(box)
 	return value
 
@@ -185,25 +155,22 @@ def calculate(candidate):
 	return value
 
 
-def hill_climbing(problem):
+def hill_climbing(problem, fixedposition):
 	current = []
 	neighbor = []
 	current = initial_state(problem)
 	count = 0
 
-	while count < 1000:
-		neighbor = getNeighbor(current)
-		count2 = 0
-		while calculate(convertMatrixToArray(current)) >= calculate(convertMatrixToArray(neighbor)) and count2 < 5000:
-			neighbor = getNeighbor(current)
-			count2 += 1
+	while count < 1000000:
+		neighbor = max_neighbor(current, fixedposition)
 
-		current = neighbor
+		if current < neighbor:
+			current = neighbor
+
 		count += 1
 
 	return current
 
-# sampleGrid = ['.', '.', '.', '7', '.', '.', '.', '.', '.', '1', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '4', '3', '.', '2', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '6', '.', '.', '.', '5', '.', '9', '.', '.', '.', '.', '.', '.', '.', '.', '.', '4', '1', '8', '.', '.', '.', '.', '8', '1', '.', '.', '.', '.', '.', '2', '.', '.', '.', '.', '5', '.', '.', '4', '.', '.', '.', '.', '3', '.', '.']
 sampleGrid = [['.', '.', '.', '7', '.', '.', '.', '.', '.'], 
 ['1', '.', '.', '.', '.', '.', '.', '.', '.'], 
 ['.', '.', '.', '4', '3', '.', '2', '.', '.'], 
@@ -215,9 +182,4 @@ sampleGrid = [['.', '.', '.', '7', '.', '.', '.', '.', '.'],
 ['.', '4', '.', '.', '.', '.', '3', '.', '.']]
 
 occupied = [3,9,21,22,24,35,39,41,51,52,53,58,59,65,70,73,78] # lembrar que comeca em zero nao em um
-# print convertMatrixToArray(hill_climbing(sampleGrid))
-# printGrid(convertMatrixToArray(hill_climbing(sampleGrid)),0)
-m = initial_state(sampleGrid)
-# printGrid(convertMatrixToArray(m),0)
-print calculate_row(m)
-print calculate_row2(convertMatrixToArray(m))
+printGrid(convertMatrixToArray(hill_climbing(sampleGrid,occupied)),0)
