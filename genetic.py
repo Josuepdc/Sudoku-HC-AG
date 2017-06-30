@@ -4,6 +4,7 @@ import os
 from random import randint
 from operator import itemgetter
 import sys
+import time
 
 def printGrid (grid, add_zeros):
   i = 0
@@ -174,7 +175,7 @@ def avaliation(individual):
 
 # Avalia a pontuacao de todos os individuos da populacao, ordena o vetor da melhor para a pior pontuacao, tendo assim o melhor de sua geracao
 def avaliation_population(population,sizePopulation,indice):
-
+	global log_resultado
 	i=0
 	j=0
 	bufferVal = []
@@ -184,7 +185,7 @@ def avaliation_population(population,sizePopulation,indice):
 		i = i+1        
 	bufferVal.sort(reverse=True)
 	bestResult = bufferVal[0]
-	print ("Melhor resultado da geracao "+ str(indice)+": "+str(bestResult[0]))
+	log_resultado += str(indice)+";"+str(bestResult[0])+"\n"
 
 	return bufferVal 
 
@@ -226,18 +227,12 @@ def roleta(population,sizePopulation):
 
 	return result
 
-# Responsavel pelo cruzamento, define se tem elitismo, chama a roleta para fornecer os dois individuos para o cruzamento, chama o metodo de cruzamento e o metodo de mutacao, ao final criando uma nova populacao com o mesmo tamanho da anterior  
-def crossover(population,probability,probabilityMutation,sizePopulation, occupied, elitism):
+# Responsavel pelo cruzamento, chama a roleta para fornecer os dois individuos para o cruzamento, chama o metodo de cruzamento e o metodo de mutacao, ao final criando uma nova populacao com o mesmo tamanho da anterior  
+def crossover(population,probability,probabilityMutation,sizePopulation, occupied):
 	randomVal = random.uniform(0.0000001, 1.0)    
 	
 	newPopulation = []
-	if(elitism == "CE"):
-		newPopulation.append(population[0][1])
-		newPopulation.append(population[1][1])
-		i=1
-	
-	else:
-		i=0
+	i=0
 
 	while(i<(sizePopulation/2)):
 		individual1=roleta(population,sizePopulation)
@@ -272,37 +267,57 @@ def main ():
   occupiedHard = [3,9,21,22,24,35,39,41,51,52,53,58,59,65,70,73,78] # lembrar que comeca em zero nao em um
   sampleGrid=sampleGridHard
   occupied=occupiedHard
-  # exit()
-  print ("Gerando populacao inicial . . .")
-  print ("\n")
+
   pop = population(sizePopulation,occupied, sampleGrid)
    
   i=0
 
-  print ("Avaliando populacao inicial . . .")
-  print ("\n")
   aval = avaliation_population(pop,sizePopulation,i) 
   i=i+1
   
-  print ("Iniciando AG . . .")
-  print ("\n")
-  
   while(i<generationNumber):
-	pop = crossover(aval,crossProb,mutationProb,sizePopulation,occupied,elitism)
+	pop = crossover(aval,crossProb,mutationProb,sizePopulation,occupied)
 	aval = avaliation_population(pop,sizePopulation,i)
 	i=i+1
-  print("\nTabuleiro da geracao final . . .\n")
+
+  print "=============="
+  print "# individuos:"
+  print sizePopulation
+  print ""
+  print "# geracoes:"
+  print generationNumber
+  print ""
+  print "Prob. cruzamento:"
+  print crossProb
+  print ""
+  print "Prob. mutacao:"
+  print mutationProb
+  print ""
+  print "Hora inicio e termino:"
+  print time.strftime("%H:%M:%S")
+  print time.strftime("%H:%M:%S")
+  print ""
+  print "Tabuleiro:"
   printGrid(aval[0][1],0)
-  print aval[0][1]
 
 if len(sys.argv) < 5:
 	print("Numero de argumentos insuficientes!")
-	print("Por favor executar: game.py #individuos #geracoes crossProb mutationProb elitsm execnum")
+	print("Por favor executar:")
+	print(" python genetic.py #individuos #geracoes crossProb mutationProb")
 	exit(0)
 sizePopulation = int(sys.argv[1])
 generationNumber = int(sys.argv[2])
 crossProb = float(sys.argv[3])
 mutationProb = float(sys.argv[4])
-elitism = str(sys.argv[5])
-execNum = str(sys.argv[6])
+
+log_resultado = "";
+
 main()  
+
+filename = `sizePopulation`+"-"+`generationNumber`+"-"+`crossProb`+"-"+`mutationProb`+"--"+time.strftime("%H;%M;%S")+".csv"
+log_file = open(filename, "w")
+log_file.write(log_resultado)
+log_file.close()
+
+print "Log de melhores das geracoes no arquivo:"
+print filename
