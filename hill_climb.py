@@ -1,7 +1,7 @@
 from random import randint
 import copy
+import sys
 
-coluna_ant = None
 
 def printGrid (grid, add_zeros):
   i = 0
@@ -39,20 +39,22 @@ def convertMatrixToArray(matrix):
 	array = []
 	for i in matrix:
 		array += i
-	return array
+	return array	
 
 def initial_state(problem):
-	matrix = problem
+	matrixOri = problem
+	matrix = copy.deepcopy(matrixOri)
+
 	for i in xrange(0,9):
-		x = 1
+		valuesToInsert = [1,2,3,4,5,6,7,8,9]
 		for j in xrange(0,9):
-			if matrix[j][i] == '.':
-				matrix[j][i] = x
-			else:
-				a = int(matrix[j][i]) - 1
-				matrix[j][i] = a + 1
-				matrix[a][i] = x
-			x+=1
+			if matrixOri[j][i].isdigit():
+				valuesToInsert.remove(int(matrixOri[j][i]))
+		
+		for j in xrange(0,9):
+			if matrixOri[j][i] == '.':
+				matrix[j][i] = valuesToInsert.pop(0)
+
 	return matrix	
 
 def max_neighbor(matrix, fixedposition):
@@ -69,9 +71,9 @@ def max_neighbor(matrix, fixedposition):
 	maxvalue = 0
 	newvalue = 0
 
-	for i in xrange(0,1):
+	for i in xrange(0,9):
 		for j in xrange(i+1,9):
-			if fixedposition.count((i*9)+j) == 0:		
+			if fixedposition.count((i*9)+coluna) == 0 and fixedposition.count((j*9)+coluna) == 0:		
 				aux = matrixNei[i][coluna]
 				matrixNei[i][coluna] = matrixNei[j][coluna]
 				matrixNei[j][coluna] = aux
@@ -84,7 +86,7 @@ def max_neighbor(matrix, fixedposition):
 				matrixNei[i][coluna] = matrixNei[j][coluna]
 				matrixNei[j][coluna] = aux
 
-	return maxneighbor
+	return [maxneighbor, maxvalue]
 
 def repeated(candidate):
 
@@ -156,20 +158,35 @@ def calculate(candidate):
 
 
 def hill_climbing(problem, fixedposition):
+	global limit
 	current = []
 	neighbor = []
 	current = initial_state(problem)
 	count = 0
 
-	while count < 1000000:
-		neighbor = max_neighbor(current, fixedposition)
+	while count < limit:
+		[neighbor, neigvalue] = max_neighbor(current, fixedposition)
 
-		if current < neighbor:
+		if calculate(current) < neigvalue:
 			current = neighbor
 
 		count += 1
 
+	print "=============="
+	print "# iteracoes:"
+	print limit
+	print ""
+	print "Melhor valor:"
+	print calculate(current)
+	print ""
+	print "Tabuleiro:"
+	printGrid(convertMatrixToArray(current),0)
+
 	return current
+
+
+coluna_ant = None
+limit = int(sys.argv[1])
 
 sampleGrid = [['.', '.', '.', '7', '.', '.', '.', '.', '.'], 
 ['1', '.', '.', '.', '.', '.', '.', '.', '.'], 
@@ -182,4 +199,4 @@ sampleGrid = [['.', '.', '.', '7', '.', '.', '.', '.', '.'],
 ['.', '4', '.', '.', '.', '.', '3', '.', '.']]
 
 occupied = [3,9,21,22,24,35,39,41,51,52,53,58,59,65,70,73,78] # lembrar que comeca em zero nao em um
-printGrid(convertMatrixToArray(hill_climbing(sampleGrid,occupied)),0)
+hill_climbing(sampleGrid,occupied)
