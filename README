@@ -1,16 +1,15 @@
-<h1>Trabalho para Resolução de Sudoku com Hill Climbing e Algoritmo Genético</h1>
+# Trabalho para Resolução de Sudoku com Hill Climbing e Algoritmo Genético
 
-<strong>
-Grupo:
-<ul>
-<li>Daniel Amaral</li>
-<li>Deoval Junior</li>
-<li>Josué Pereira</li>
-</ul>
-</strong>
+### Grupo:
+ * Daniel Amaral
+ * Deoval Junior
+ * Josué Pereira
 
+## Tabuleiro
 
-<h2>Hill Climbing</h2>
+![Alt text](/sudoku.png "Tabuleiro de Sudoku")
+
+## Hill Climbing
 
 This is a Scala implementation of a Sudoku solver for a 9x9 puzzle that uses a local search Hill Climb to find a solution. It will choose a better fitness cost with a probability of .995
 
