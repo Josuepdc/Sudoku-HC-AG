@@ -8,13 +8,3 @@
 ## Tabuleiro
 
 ![Alt text](/sudoku.png "Tabuleiro de Sudoku")
-
-## Hill Climbing
-
-This is a Scala implementation of a Sudoku solver for a 9x9 puzzle that uses a local search Hill Climb to find a solution. It will choose a better fitness cost with a probability of .995
-
-Objective function: Number of repeated numbers in all the rows plus number of repeated numbers in each quadrant. All columns get initialized to already satisfy the property of containing numbers 1 through 9.
-
-Transformation function: Implemented by doing a swap of numbers in the same column yet in distinct rows. A random column number is picked, then two random rows are selected with the only requirement that they must be different.
-
-Stopping Criteria: If the number of iterations exceeds 5 million then the Hill Climb will terminate even though a solution may not have been found on the given input for the problem.

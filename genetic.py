@@ -263,6 +263,22 @@ def mutation(individual,probability,occupied):
 	return individual
 
 def main (): 
+  print "=============="
+  print "# individuos:"
+  print sizePopulation
+  print ""
+  print "# geracoes:"
+  print generationNumber
+  print ""
+  print "Prob. cruzamento:"
+  print crossProb
+  print ""
+  print "Prob. mutacao:"
+  print mutationProb
+  print ""
+  print "Hora inicio e termino:"
+  print time.strftime("%H:%M:%S")
+
   sampleGridHard = ['.', '.', '.', '7', '.', '.', '.', '.', '.', '1', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '4', '3', '.', '2', '.', '.', '.', '.', '.', '.', '.', '.', '.', '.', '6', '.', '.', '.', '5', '.', '9', '.', '.', '.', '.', '.', '.', '.', '.', '.', '4', '1', '8', '.', '.', '.', '.', '8', '1', '.', '.', '.', '.', '.', '2', '.', '.', '.', '.', '5', '.', '.', '4', '.', '.', '.', '.', '3', '.', '.']
   occupiedHard = [3,9,21,22,24,35,39,41,51,52,53,58,59,65,70,73,78] # lembrar que comeca em zero nao em um
   sampleGrid=sampleGridHard
@@ -280,21 +296,6 @@ def main ():
 	aval = avaliation_population(pop,sizePopulation,i)
 	i=i+1
 
-  print "=============="
-  print "# individuos:"
-  print sizePopulation
-  print ""
-  print "# geracoes:"
-  print generationNumber
-  print ""
-  print "Prob. cruzamento:"
-  print crossProb
-  print ""
-  print "Prob. mutacao:"
-  print mutationProb
-  print ""
-  print "Hora inicio e termino:"
-  print time.strftime("%H:%M:%S")
   print time.strftime("%H:%M:%S")
   print ""
   print "Tabuleiro:"

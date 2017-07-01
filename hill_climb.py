@@ -159,14 +159,18 @@ def hill_climbing(problem, fixedposition):
 	neighbor = []
 	current = initial_state(problem)
 	count = 0
+	count_rep = 0
 	max_calculate = calculate(current)
 
-	while count < limit:
+	while count < limit and count_rep < limit_rep:
 		[neighbor, neigvalue] = max_neighbor(current, fixedposition)
 
 		if max_calculate < neigvalue:
 			current = neighbor
 			max_calculate = neigvalue
+			count_rep = 0
+		else:
+			count_rep += 1
 
 		count += 1
 
@@ -182,9 +186,14 @@ def hill_climbing(problem, fixedposition):
 
 	return current
 
-
-coluna_ant = None
+if len(sys.argv) < 3:
+	print("Numero de argumentos insuficientes!")
+	print("Por favor executar:")
+	print(" python hill_climb.py limite_iteracoes_total limite_iteracoes_valores_repetidos")
+	exit(0)
 limit = int(sys.argv[1])
+limit_rep = int(sys.argv[2])
+coluna_ant = None
 
 sampleGrid = [['.', '.', '.', '7', '.', '.', '.', '.', '.'], 
 ['1', '.', '.', '.', '.', '.', '.', '.', '.'], 
